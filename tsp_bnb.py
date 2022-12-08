@@ -57,7 +57,7 @@ class Graph:
         self.nodes = [Node(x) for x in range(1, self.num_nodes)]
         self.lower_bound, self.upper_bound = -np.inf, np.inf
         self.path = deque([self.start], maxlen=self.num_nodes)
-        self.nodes_explored = 1
+        self.nodes_explored = 0
 
     def node_dfs(self, node, start_time, parent=None, path=deque([]), visited=set()):
         if time.time()-start_time >= 600:
@@ -69,13 +69,11 @@ class Graph:
         self.nodes_explored += 1
         if len(visited) == self.num_nodes-1:
             self.upper_bound = node.cost
-            # print("New Upper Bound:", self.upper_bound)
             self.path.clear()
             self.path.append(self.start)
             temp = path.copy()
             while temp:
                 self.path.append(temp.popleft())
-            # print("Updated Path:", self.path)
             temp.clear()
             return
 
@@ -85,9 +83,7 @@ class Graph:
                 neighbor.matrix = neighbor.update_matrix(node.matrix.copy(), neighbor.label, node.label)
                 neighbor.matrix, neighbor.cost = neighbor.reduce_matrix(neighbor.matrix, neighbor.cost, self.num_nodes)
                 visited.add(neighbor)
-                # print("Visited:", visited)
                 path.append(neighbor)
-                # print("Path so far:", path)
                 try:
                     self.node_dfs(neighbor, start_time, node, path, visited)
                 except:
@@ -96,73 +92,25 @@ class Graph:
                 path.pop()
 
     def init_dfs(self, start_time):
+        np.fill_diagonal(self.start.matrix, np.inf)
         self.start.matrix, self.start.cost = self.start.reduce_matrix(self.start.matrix, 0, self.num_nodes)
         self.lower_bound = self.start.cost
-        # print("Lower Bound:", self.lower_bound)
-        # print("Upper Bound:", self.upper_bound)
-        # print(self.start.label, self.start.matrix, self.start.cost)
         self.node_dfs(self.start, start_time)
 
-def write_distance_matrix(n, mean, sigma):
-    distance_matrix = np.zeros((n, n))
-    random_distance = []
-    num_distance = int(n * (n-1) / 2)
-    for _ in range(num_distance):
-        distance = 0
-        while distance <= 0:
-            distance = np.random.normal(mean, sigma)
-        random_distance.append(distance)
-    iu = np.triu_indices(n, 1)
-    distance_matrix[iu] = random_distance
-    distance_matrix += distance_matrix.T
-    distance_matrix = distance_matrix.astype(float)
-    
-    np.savetxt(
-        f"bnb_{n}_{mean}_{sigma}.out",
-        distance_matrix,
-        delimiter=" ",
-        fmt="%1.4f",
-        header=str(n),
-        comments="",
-    )
-
-    return distance_matrix, f"bnb_{n}_{mean}_{sigma}.out"
-
-def write_result(file_path, graph, time_taken):
-    with open(file_path, "a") as f:
-        f.write("\nTime taken: " +str(time_taken)+ " seconds")
-        f.write("\nLower bound from Heuristic function: " +str(graph.lower_bound))
-        f.write("\nTotal number of nodes explored: " +str(graph.nodes_explored))
-        f.write("\n\nMinimum Tour Cost: " +str(graph.upper_bound))
-        f.write("\nPath: ")
-        output = graph.path.copy()
+    # Run the algorithm
+    def run(self):
+        start_time = time.time()
+        self.init_dfs(start_time)
+        end_time = time.time()
+        print("\nResults for Branch and Bound:")
+        print("\nTime taken:", end_time-start_time, "seconds")
+        print("Lower Bound from Heuristic function:", self.lower_bound)
+        print("Total number of nodes explored:", self.nodes_explored)
+        print("\nFinal path:", end=" ")
+        output = self.path.copy()
         while output:
-            f.write(str(output.popleft()) + " -> ")
-        f.write(str(graph.start.label))
+            print(output.popleft(), end=" -> ")
+        print(self.start.label)
         output.clear()
-
-if __name__ == "__main__":
-    nodes = int(input("Enter the number of locations: "))
-    mean = int(input("Enter the mean: "))
-    sigma = int(input("Enter the standard deviation: "))
-    dist_matrix, file_path = write_distance_matrix(nodes, mean, sigma)
-    np.fill_diagonal(dist_matrix, np.inf)
-
-    graph = Graph(nodes)
-    graph.start.matrix = dist_matrix
-
-    start_time = time.time()
-    graph.init_dfs(start_time)
-
-    end_time = time.time()
-    write_result(file_path, graph, end_time-start_time)
-    print("\nTime taken:", end_time-start_time, "seconds")
-    print("Lower Bound from Heuristic function:", graph.lower_bound)
-    print("Total number of nodes explored:", graph.nodes_explored)
-    print("\nMinimum Tour Cost: ", graph.upper_bound)
-    print("Path:", end=" ")
-    output = graph.path.copy()
-    while output:
-        print(output.popleft(), end=" -> ")
-    print(graph.start.label)
-    output.clear()
+        print("Cost of final path: ", self.upper_bound)
+        return end_time-start_time

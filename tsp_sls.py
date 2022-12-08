@@ -106,45 +106,15 @@ class SLS:
                 break
         return answer+[end-start]
 
+    # Run the algorithm
     def run(self):
         answer = self.randomRestartWrapper()
         path = ""
         for val in answer[0]:
             path+=str(val)+" -> "
         path = path[:-4]
-        print("Final path is ",path)
+        print("\nResults from Stochastic Local Search:")
+        print("\nTime taken:",answer[2], "seconds")
+        print("Final path:", path)
         print("Cost of final path is ",answer[1])
-        print("Total runtime is",answer[2], "seconds")
-
-def write_distance_matrix(n, mean, sigma):
-    distance_matrix = np.zeros((n, n))
-    random_distance = []
-    num_distance = int(n * (n-1) / 2)
-    for _ in range(num_distance):
-        distance = 0
-        while distance <= 0:
-            distance = np.random.normal(mean, sigma)
-        random_distance.append(distance)
-    iu = np.triu_indices(n, 1)
-    distance_matrix[iu] = random_distance
-    distance_matrix += distance_matrix.T
-    distance_matrix = distance_matrix.astype(float)
-    
-    np.savetxt(
-        f"{n}_{mean}_{sigma}.out",
-        distance_matrix,
-        delimiter=" ",
-        fmt="%1.4f",
-        header=str(n),
-        comments="",
-    )
-
-    return distance_matrix
-
-if __name__ == "__main__":
-    nodes = int(input("Enter the number of locations: "))
-    mean = int(input("Enter the mean: "))
-    sigma = int(input("Enter the standard deviation: "))
-    dist_matrix = write_distance_matrix(nodes, mean, sigma)
-    sls = SLS(dist_matrix, nodes)
-    sls.run()
+        return path, answer
