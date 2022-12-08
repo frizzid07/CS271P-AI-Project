@@ -2,6 +2,7 @@ import numpy as np
 from collections import deque
 import time
 
+# This class defines the attributes of every node and the heuristics to calculate
 class Node:
     def __init__(self, label, matrix=np.array([]), cost=0):
         self.label = label
@@ -53,9 +54,10 @@ class Graph:
     def __init__(self, num_nodes):
         self.num_nodes = num_nodes
         self.start = Node(0)
-        self.nodes = [Node(x) for x in range(1, num_nodes)]
+        self.nodes = [Node(x) for x in range(1, self.num_nodes)]
         self.lower_bound, self.upper_bound = -np.inf, np.inf
         self.path = deque([self.start], maxlen=self.num_nodes)
+        self.nodes_explored = 1
 
     def node_dfs(self, node, start_time, parent=None, path=deque([]), visited=set()):
         if time.time()-start_time >= 600:
@@ -64,6 +66,7 @@ class Graph:
         if node.cost >= self.upper_bound:
             return
         
+        self.nodes_explored += 1
         if len(visited) == self.num_nodes-1:
             self.upper_bound = node.cost
             # print("New Upper Bound:", self.upper_bound)
@@ -115,7 +118,7 @@ def write_distance_matrix(n, mean, sigma):
     distance_matrix = distance_matrix.astype(float)
     
     np.savetxt(
-        f"{n}_{mean}_{sigma}.out",
+        f"bnb_{n}_{mean}_{sigma}.out",
         distance_matrix,
         delimiter=" ",
         fmt="%1.4f",
@@ -123,17 +126,20 @@ def write_distance_matrix(n, mean, sigma):
         comments="",
     )
 
-    return distance_matrix, f"{n}_{mean}_{sigma}.out"
+    return distance_matrix, f"bnb_{n}_{mean}_{sigma}.out"
 
 def write_result(file_path, graph, time_taken):
     with open(file_path, "a") as f:
-        f.write("\nHeuristic Lower Bound: " +str(graph.lower_bound))
-        f.write("\nMinimum Path Cost: " +str(graph.upper_bound))
-        f.write("\nPath: ")
-        while graph.path:
-            f.write(str(graph.path.popleft()) + " -> ")
-        f.write(str(graph.start.label))
         f.write("\nTime taken: " +str(time_taken)+ " seconds")
+        f.write("\nLower bound from Heuristic function: " +str(graph.lower_bound))
+        f.write("\nTotal number of nodes explored: " +str(graph.nodes_explored))
+        f.write("\n\nMinimum Tour Cost: " +str(graph.upper_bound))
+        f.write("\nPath: ")
+        output = graph.path.copy()
+        while output:
+            f.write(str(output.popleft()) + " -> ")
+        f.write(str(graph.start.label))
+        output.clear()
 
 if __name__ == "__main__":
     nodes = int(input("Enter the number of locations: "))
@@ -148,10 +154,15 @@ if __name__ == "__main__":
     start_time = time.time()
     graph.init_dfs(start_time)
 
-    print("\nHeuristic Lower Bound: ", graph.lower_bound)
-    print("Minimum Path Cost: ", graph.upper_bound)
-    print("Path: ", end="")
-    while graph.path:
-        print(graph.path.popleft(), end=" -> ")
+    end_time = time.time()
+    write_result(file_path, graph, end_time-start_time)
+    print("\nTime taken:", end_time-start_time, "seconds")
+    print("Lower Bound from Heuristic function:", graph.lower_bound)
+    print("Total number of nodes explored:", graph.nodes_explored)
+    print("\nMinimum Tour Cost: ", graph.upper_bound)
+    print("Path:", end=" ")
+    output = graph.path.copy()
+    while output:
+        print(output.popleft(), end=" -> ")
     print(graph.start.label)
-    print("Time taken: ", time.time()-start_time, " seconds")
+    output.clear()
