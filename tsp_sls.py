@@ -116,6 +116,8 @@ class SLS:
         print("Cost of final path is ",answer[1])
         print("Total runtime is",answer[2], "seconds")
 
+        return answer[2]
+
 def write_distance_matrix(n, mean, sigma):
     distance_matrix = np.zeros((n, n))
     random_distance = []
@@ -130,21 +132,38 @@ def write_distance_matrix(n, mean, sigma):
     distance_matrix += distance_matrix.T
     distance_matrix = distance_matrix.astype(float)
     
-    np.savetxt(
-        f"{n}_{mean}_{sigma}.out",
-        distance_matrix,
-        delimiter=" ",
-        fmt="%1.4f",
-        header=str(n),
-        comments="",
-    )
+    # np.savetxt(
+    #     f"{n}_{mean}_{sigma}.out",
+    #     distance_matrix,
+    #     delimiter=" ",
+    #     fmt="%1.4f",
+    #     header=str(n),
+    #     comments="",
+    # )
 
     return distance_matrix
 
 if __name__ == "__main__":
-    nodes = int(input("Enter the number of locations: "))
-    mean = int(input("Enter the mean: "))
-    sigma = int(input("Enter the standard deviation: "))
-    dist_matrix = write_distance_matrix(nodes, mean, sigma)
-    sls = SLS(dist_matrix, nodes)
-    sls.run()
+
+
+    import csv
+    headers = ['N','Runtime']
+    file = open('sls.csv','w')
+    writer = csv.writer(file)
+
+    writer.writerow(headers)
+
+    for i in range(5,40):
+
+        nodes = i
+        mean = 100
+        sigma = 50
+        dist_matrix = write_distance_matrix(nodes, mean, sigma)
+        sls = SLS(dist_matrix, nodes)
+        runtime = sls.run()
+
+        data = [i,runtime]
+        writer.writerow(data)
+        file.flush()
+    
+    file.close()

@@ -115,7 +115,7 @@ def write_distance_matrix(n, mean, sigma):
     distance_matrix = distance_matrix.astype(float)
     
     np.savetxt(
-        f"{n}_{mean}_{sigma}.out",
+        f"{'BNBvsSLS'}_{n}.out",
         distance_matrix,
         delimiter=" ",
         fmt="%1.4f",
@@ -136,22 +136,38 @@ def write_result(file_path, graph, time_taken):
         f.write("\nTime taken: " +str(time_taken)+ " seconds")
 
 if __name__ == "__main__":
-    nodes = int(input("Enter the number of locations: "))
-    mean = int(input("Enter the mean: "))
-    sigma = int(input("Enter the standard deviation: "))
-    dist_matrix, file_path = write_distance_matrix(nodes, mean, sigma)
-    np.fill_diagonal(dist_matrix, np.inf)
+    
+    import csv
+    headers = ['N','Heuristic Lower Bound','Min_Path_Cost','Runtime']
+    file = open('BNBvSLS_bnb.csv','w')
+    writer = csv.writer(file)
 
-    graph = Graph(nodes)
-    graph.start.matrix = dist_matrix
+    writer.writerow(headers)
 
-    start_time = time.time()
-    graph.init_dfs(start_time)
+    for i in range(4,20):
 
-    print("\nHeuristic Lower Bound: ", graph.lower_bound)
-    print("Minimum Path Cost: ", graph.upper_bound)
-    print("Path: ", end="")
-    while graph.path:
-        print(graph.path.popleft(), end=" -> ")
-    print(graph.start.label)
-    print("Time taken: ", time.time()-start_time, " seconds")
+        nodes = i
+        mean = 100
+        sigma = 30
+        dist_matrix, file_path = write_distance_matrix(nodes, mean, sigma)
+        np.fill_diagonal(dist_matrix, np.inf)
+
+        graph = Graph(nodes)
+        graph.start.matrix = dist_matrix
+
+        start_time = time.time()
+        graph.init_dfs(start_time)
+
+        print("\nHeuristic Lower Bound: ", graph.lower_bound)
+        print("Minimum Path Cost: ", graph.upper_bound)
+        print("Path: ", end="")
+        while graph.path:
+            print(graph.path.popleft(), end=" -> ")
+        print(graph.start.label)
+        print("Time taken: ", time.time()-start_time, " seconds")
+
+        data = [i,graph.lower_bound,graph.upper_bound,time.time()-start_time]
+        writer.writerow(data)
+        file.flush()
+    
+    file.close()
