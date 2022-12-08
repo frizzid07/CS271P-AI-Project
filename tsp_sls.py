@@ -127,16 +127,19 @@ def write_distance_matrix(n, mean, sigma):
         random_distance.append(distance)
     iu = np.triu_indices(n, 1)
     distance_matrix[iu] = random_distance
+    distance_matrix += distance_matrix.T
+    distance_matrix = distance_matrix.astype(float)
     
     np.savetxt(
-    f"{n}_{mean}_{sigma}.out",
-    distance_matrix,
-    delimiter=" ",
-    fmt="%1.4f",
-    header=str(n),
-    comments="")
+        f"{n}_{mean}_{sigma}.out",
+        distance_matrix,
+        delimiter=" ",
+        fmt="%1.4f",
+        header=str(n),
+        comments="",
+    )
 
-    return distance_matrix + distance_matrix.T
+    return distance_matrix
 
 if __name__ == "__main__":
     nodes = int(input("Enter the number of locations: "))
