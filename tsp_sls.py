@@ -7,7 +7,7 @@ class SLS:
     def __init__(self,dist_matrix,total_nodes):
         self.distance_matrix = dist_matrix
         self.total_nodes = total_nodes
-        self.max_random_restarts = 500
+        self.max_random_restarts = total_nodes*10
         self.max_hill_climbing_iterations = 100
         
     def get_random_neighbor(self,neighbors):
