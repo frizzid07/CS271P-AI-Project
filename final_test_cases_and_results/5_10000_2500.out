@@ -1,0 +1,22 @@
+5
+0.0000 9434.4908 10971.7086 13726.6514 7260.6043
+9434.4908 0.0000 10344.6631 9955.5128 12496.3467
+10971.7086 10344.6631 0.0000 10223.7170 4214.1619
+13726.6514 9955.5128 10223.7170 0.0000 7239.5964
+7260.6043 12496.3467 4214.1619 7239.5964 0.0000
+
+
+Results from Branch and Bound:
+
+Time taken: 0.0 seconds
+Lower bound from Heuristic function: 35057.92378712568
+Total number of nodes explored: 10
+
+Final path: 0 -> 1 -> 3 -> 2 -> 4 -> 0
+Cost of final path: 41088.48672215143
+
+Results from Stochastic Local Search:
+
+Time taken: 0.009004592895507812 seconds
+Final path: 0 -> 4 -> 2 -> 3 -> 1 -> 0
+Cost of final path: 41088.48672215143

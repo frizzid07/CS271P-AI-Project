@@ -22,32 +22,16 @@ class Node:
         return matrix
     
     def reduce_matrix(self, matrix, cost, matrix_size):
+        min_row = matrix.min(axis=1)
         for row in range(matrix_size):
-            if not np.array_equal(matrix[row], np.array([np.inf]*matrix_size)):
-                min_cost = np.inf
-                for col in range(matrix_size):
-                    if matrix[row, col] == 0:
-                        min_cost = 0
-                        break
-                    if min_cost > matrix[row, col]:
-                        min_cost = matrix[row, col]
-                if min_cost != 0 or min_cost != np.inf:
-                    matrix[row] -= min_cost
-                    cost += min_cost
-        
+            if min_row[row] not in (0, np.inf):
+                matrix[row] -= min_row[row]
+                cost += min_row[row]
+        min_col = matrix.min(axis=0)
         for col in range(matrix_size):
-            if not np.array_equal(matrix[:, col], np.array([np.inf]*matrix_size)):
-                min_cost = np.inf
-                for row in range(matrix_size):
-                    if matrix[row, col] == 0:
-                        min_cost = 0
-                        break
-                    if min_cost > matrix[row, col]:
-                        min_cost = matrix[row, col]
-                if min_cost != 0 or min_cost != np.inf:
-                    matrix[:, col] -= min_cost
-                    cost += min_cost
-        
+            if min_col[col] not in (0, np.inf):
+                matrix[:, col] -= min_col[col]
+                cost += min_col[col]
         return matrix, cost
 
 class Graph:
@@ -59,7 +43,7 @@ class Graph:
         self.path = deque([self.start], maxlen=self.num_nodes)
         self.nodes_explored = 0
 
-    def node_dfs(self, node, start_time, parent=None, path=deque([]), visited=set()):
+    def node_dfs(self, node, start_time, path=deque([]), visited=set()):
         if time.time()-start_time >= 600:
             raise TimeoutError
 
@@ -85,7 +69,7 @@ class Graph:
                 visited.add(neighbor)
                 path.append(neighbor)
                 try:
-                    self.node_dfs(neighbor, start_time, node, path, visited)
+                    self.node_dfs(neighbor, start_time, path, visited)
                 except:
                     break
                 visited.remove(neighbor)

@@ -74,7 +74,7 @@ if __name__ == "__main__":
                 write_result(file_path, choice, algorithm, time_taken)
             elif choice == 2:
                 np.fill_diagonal(dist_matrix, 0)
-                algorithm = tsp_sls.SLS(dist_matrix, nodes)
+                algorithm = tsp_sls.SLS(dist_matrix.copy(), nodes)
                 path, answer = algorithm.run()
                 write_result(file_path, choice, path, answer)
             elif choice == 3 or choice == 4:
