@@ -7,7 +7,7 @@ The file structure is as follows:
 2. tsp_bnb.py - This file contains all the code for Branch and bound
 3. tsp_sls.py - This file contains all the code for stochastic local search
 
-In order to run the code, run the *run_tsp.py* file on command prompt. After running the file, you will first have to input number of locations, mean, and the standard deviation required to generate a distance matrix. We also create a new file where we write the distance matrix. This file will be in the same directory as the *run_tsp.py* file. Once the distance matrix is generated, you will see a menu with four options as below:
+In order to run the code, run the *run_tsp.py* file on command prompt. After running the file, you will first have to input number of locations, mean, and the standard deviation required to generate a distance matrix. We also create a new file where we write the distance matrix. This file will be in the directory named *final_test_cases_and_results*. Once the distance matrix is generated, you will see a menu with four options as below:
 
 1. Branch and Bound DFS
 2. Stochastic Local Search
