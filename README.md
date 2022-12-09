@@ -1,6 +1,13 @@
 # CS271P-AI-Project
 A repository to maintain AI project code for Group C505
 
+Group Members-
+1. Tanmay Vikas Bhagwat (tvbhagwa@uci.edu)
+2. Mandar Milind Bhalerao (mmbhaler@uci.edu)
+2. Aditya Anil Bhave (aabhave@uci.edu)
+
+Submission Details-
+
 The file structure is as follows:
 
 1. run_tsp.py - This is the main file which contains all the driver functions to calculate the solution with SLS/BNB
