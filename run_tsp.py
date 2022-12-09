@@ -73,6 +73,7 @@ if __name__ == "__main__":
                 time_taken = algorithm.run()
                 write_result(file_path, choice, algorithm, time_taken)
             elif choice == 2:
+                np.fill_diagonal(dist_matrix, 0)
                 algorithm = tsp_sls.SLS(dist_matrix, nodes)
                 path, answer = algorithm.run()
                 write_result(file_path, choice, path, answer)
