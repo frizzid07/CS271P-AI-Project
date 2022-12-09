@@ -69,7 +69,7 @@ if __name__ == "__main__":
             choice = int(input("Enter your choice: "))
             if choice == 1:
                 algorithm = tsp_bnb.Graph(nodes)
-                algorithm.start.matrix = dist_matrix
+                algorithm.start.matrix = dist_matrix.copy()
                 time_taken = algorithm.run()
                 write_result(file_path, choice, algorithm, time_taken)
             elif choice == 2:
